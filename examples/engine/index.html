@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四冲程发动机原理可视化 (Four-Stroke Engine)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: #1a1a2e; /* User requested background */
+            color: #e0e0e0;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        /* Custom Range Slider Styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #4a90e2;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.8);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #333355;
+            border-radius: 2px;
+        }
+        
+        .glass-panel {
+            background: rgba(26, 26, 46, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .phase-active {
+            background-color: #4a90e2;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(74, 144, 226, 0.5);
+        }
+        
+        .valve-open { color: #4ade80; font-weight: bold; text-shadow: 0 0 5px rgba(74, 222, 128, 0.5); }
+        .valve-closed { color: #94a3b8; }
+        .spark-active { color: #ffd700; text-shadow: 0 0 10px #ffd700; font-weight: bold; }
+    </style>
+    <!-- Three.js CDN -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body class="h-screen w-screen flex flex-col relative">
+
+    <!-- Header -->
+    <div class="absolute top-0 left-0 w-full p-6 z-10 pointer-events-none">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-bold text-[#4a90e2] tracking-wider">四冲程发动机原理</h1>
+                <p class="text-gray-400 text-sm mt-1">Four-Stroke Internal Combustion Engine Simulation</p>
+            </div>
+            <div class="glass-panel p-4 rounded-xl pointer-events-auto text-xs space-y-2 w-48">
+                <div class="flex justify-between items-center border-b border-gray-600 pb-2">
+                    <span class="text-gray-400">曲轴角度</span>
+                    <span id="crank-angle-display" class="font-mono text-[#ffd700] text-lg">0°</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-gray-400">当前冲程</span>
+                    <span id="cycle-phase-display" class="font-bold text-white">进气</span>
+                </div>
+                <div class="grid grid-cols-2 gap-2 mt-2 text-center">
+                    <div>
+                        <div class="text-gray-500 text-[10px]">进气门</div>
+                        <div id="intake-status" class="valve-closed transition-colors duration-300">关闭</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-500 text-[10px]">排气门</div>
+                        <div id="exhaust-status" class="valve-closed transition-colors duration-300">关闭</div>
+                    </div>
+                </div>
+                <div class="text-center mt-2 pt-2 border-t border-gray-600">
+                    <div class="text-gray-500 text-[10px]">火花塞</div>
+                    <div id="spark-status" class="valve-closed">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main 3D Canvas -->
+    <div id="canvas-container" class="w-full h-full bg-[#1a1a2e]"></div>
+
+    <!-- Controls Overlay -->
+    <div class="absolute bottom-0 left-0 w-full p-6 z-10 pointer-events-none">
+        <div class="glass-panel rounded-2xl p-6 pointer-events-auto max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            
+            <!-- Phase Indicators -->
+            <div class="flex gap-2 w-full md:w-auto">
+                <div id="phase-intake" class="flex-1 md:flex-none px-4 py-2 rounded-lg border border-[#4a90e2] text-center transition-all duration-300 opacity-50">
+                    <div class="text-xs text-[#4a90e2] font-bold">01</div>
+                    <div class="text-sm">进气冲程</div>
+                </div>
+                <div id="phase-compression" class="flex-1 md:flex-none px-4 py-2 rounded-lg border border-[#4a90e2] text-center transition-all duration-300 opacity-50">
+                    <div class="text-xs text-[#4a90e2] font-bold">02</div>
+                    <div class="text-sm">压缩冲程</div>
+                </div>
+                <div id="phase-combustion" class="flex-1 md:flex-none px-4 py-2 rounded-lg border border-[#e94560] text-center transition-all duration-300 opacity-50">
+                    <div class="text-xs text-[#e94560] font-bold">03</div>
+                    <div class="text-sm">做功冲程</div>
+                </div>
+                <div id="phase-exhaust" class="flex-1 md:flex-none px-4 py-2 rounded-lg border border-[#4a90e2] text-center transition-all duration-300 opacity-50">
+                    <div class="text-xs text-[#4a90e2] font-bold">04</div>
+                    <div class="text-sm">排气冲程</div>
+                </div>
+            </div>
+
+            <!-- Playback Controls -->
+            <div class="flex items-center gap-4 w-full md:w-auto border-t md:border-t-0 md:border-l border-gray-600 pt-4 md:pt-0 md:pl-6">
+                <button id="btn-reset" class="p-3 rounded-full bg-gray-700 hover:bg-gray-600 transition text-white" title="重置">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"/></svg>
+                </button>
+                <button id="btn-play" class="p-4 rounded-full bg-[#4a90e2] hover:bg-[#3b7bc0] transition text-white shadow-lg shadow-blue-500/30" title="播放/暂停">
+                    <svg id="icon-play" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="block"><path d="M8 5v14l11-7z"/></svg>
+                    <svg id="icon-pause" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="hidden"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                </button>
+                
+                <div class="flex flex-col w-32">
+                    <label class="text-[10px] text-gray-400 mb-1 flex justify-between">
+                        <span>速度</span>
+                        <span id="speed-val">1.0x</span>
+                    </label>
+                    <input type="range" id="speed-slider" min="0.1" max="3.0" step="0.1" value="1.0">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legend -->
+    <div class="absolute top-32 left-6 glass-panel p-4 rounded-xl pointer-events-auto hidden md:block">
+        <h3 class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-widest">图例</h3>
+        <div class="space-y-2 text-sm">
+            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#4a90e2]"></div><span>活塞</span></div>
+            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#e94560]"></div><span>连杆/曲轴</span></div>
+            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#4ade80]"></div><span>进气门 (开)</span></div>
+            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#f87171]"></div><span>排气门 (开)</span></div>
+            <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-[#ffd700]"></div><span>火花塞 (点火)</span></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- Configuration ---
+        const CONFIG = {
+            colors: {
+                bg: 0x1a1a2e,
+                piston: 0x4a90e2,
+                crank: 0xe94560,
+                rod: 0xc0c0c0,
+                cylinder: 0x334455,
+                intakeValve: 0x4ade80,
+                exhaustValve: 0xf87171,
+                sparkPlug: 0xffaa00,
+                spark: 0xffd700
+            },
+            dims: {
+                cylinderRadius: 4,
+                cylinderHeight: 20,
+                pistonHeight: 5,
+                rodLength: 14,
+                crankRadius: 3.5
+            }
+        };
+
+        // --- State ---
+        let state = {
+            isPlaying: true,
+            speed: 1.0,
+            crankAngle: 0, // 0 to 720
+            cycleCount: 0
+        };
+
+        // --- Scene Setup ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(CONFIG.colors.bg);
+        scene.fog = new THREE.FogExp2(CONFIG.colors.bg, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(25, 20, 35);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.target.set(0, 10, 0);
+
+        // --- Lighting ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        dirLight.position.set(10, 30, 20);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+        scene.add(dirLight);
+
+        const spotLight = new THREE.SpotLight(0x4a90e2, 5);
+        spotLight.position.set(-20, 20, 0);
+        spotLight.lookAt(0, 10, 0);
+        scene.add(spotLight);
+
+        // --- Materials ---
+        const matPiston = new THREE.MeshStandardMaterial({ 
+            color: CONFIG.colors.piston, 
+            roughness: 0.3, 
+            metalness: 0.6 
+        });
+        const matRod = new THREE.MeshStandardMaterial({ 
+            color: CONFIG.colors.rod, 
+            roughness: 0.4, 
+            metalness: 0.8 
+        });
+        const matCrank = new THREE.MeshStandardMaterial({ 
+            color: CONFIG.colors.crank, 
+            roughness: 0.5, 
+            metalness: 0.7 
+        });
+        const matCylinder = new THREE.MeshPhysicalMaterial({ 
+            color: CONFIG.colors.cylinder, 
+            transparent: true, 
+            opacity: 0.3, 
+            roughness: 0.1,
+            metalness: 0.1,
+            side: THREE.DoubleSide,
+            transmission: 0.2
+        });
+        const matIntakeValve = new THREE.MeshStandardMaterial({ color: CONFIG.colors.intakeValve });
+        const matExhaustValve = new THREE.MeshStandardMaterial({ color: CONFIG.colors.exhaustValve });
+        const matSpark = new THREE.MeshStandardMaterial({ color: CONFIG.colors.sparkPlug, emissive: 0x442200 });
+        const matExplosion = new THREE.MeshBasicMaterial({ 
+            color: 0xffaa00, 
+            transparent: true, 
+            opacity: 0 
+        });
+
+        // --- Geometry Builders ---
+
+        // 1. Crankshaft (Simplified as a single throw for visualization)
+        const crankGroup = new THREE.Group();
+        
+        // Counterweight/Main Journal
+        const crankMainGeo = new THREE.CylinderGeometry(1.5, 1.5, 4, 16);
+        crankMainGeo.rotateZ(Math.PI / 2);
+        const crankMain = new THREE.Mesh(crankMainGeo, matCrank);
+        crankMain.castShadow = true;
+        crankGroup.add(crankMain);
+
+        // Crank Arm (Web)
+        const crankArmGeo = new THREE.BoxGeometry(3, 1.5, 2);
+        const crankArm = new THREE.Mesh(crankArmGeo, matCrank);
+        crankArm.position.x = 1.5;
+        crankArm.castShadow = true;
+        cran

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vispawn - 输入定理，生成3D可视化</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #4a90e2; --success: #4caf50; --warning: #ff9800; --error: #f44336;
+            --bg: #0a0a14; --card: #12121f; --hover: #1a1a2e;
+            --text: #fff; --muted: #8b8b9a; --border: #2a2a3e;
+        }
+        body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* Header */
+        .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 20px; position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; display: flex; gap: 20px; align-items: center; }
+        .logo { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, var(--primary), #00d9ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .input-wrap { flex: 1; position: relative; }
+        .input-wrap input { width: 100%; padding: 14px 20px; padding-right: 100px; font-size: 16px; border: 2px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); }
+        .input-wrap input:focus { outline: none; border-color: var(--primary); }
+        .btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; }
+        .btn:hover { opacity: 0.9; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Main */
+        .main { max-width: 1200px; margin: 0 auto; padding: 30px 20px; }
+
+        /* Status */
+        .status { display: flex; align-items: center; gap: 16px; padding: 16px 20px; background: var(--card); border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border); }
+        .status.hidden { display: none; }
+        .status-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--muted); }
+        .status-dot.processing { background: var(--primary); animation: pulse 1s infinite; }
+        .status-dot.completed { background: var(--success); }
+        .status-dot.failed { background: var(--error); }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .status-info { flex: 1; }
+        .status-text { font-weight: 500; }
+        .status-detail { font-size: 0.9rem; color: var(--muted); }
+
+        /* Grid */
+        .grid { display: grid; grid-template-columns: 1fr 350px; gap: 20px; }
+        @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+        /* Preview */
+        .preview { background: var(--card); border-radius: 10px; border: 1px solid var(--border); overflow: hidden; min-height: 500px; }
+        .preview-header { display: flex; justify-content: space-between; padding: 12px 16px; border-bottom: 1px solid var(--border); background: var(--hover); }
+        .preview-tabs { display: flex; gap: 8px; }
+        .tab { padding: 6px 14px; border: none; background: transparent; color: var(--muted); border-radius: 6px; cursor: pointer; }
+        .tab.active { background: var(--primary); color: white; }
+        .preview-actions { display: flex; gap: 8px; }
+        .icon-btn { width: 32px; height: 32px; border: none; background: transparent; color: var(--muted); border-radius: 6px; cursor: pointer; }
+        .icon-btn:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+        .preview-content { position: relative; height: 500px; background: var(--bg); }
+        #preview-frame, #code-view { width: 100%; height: 100%; border: none; }
+        #code-view { display: none; padding: 20px; overflow: auto; white-space: pre-wrap; font-family: monospace; font-size: 12px; }
+
+        /* Empty */
+        .empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--muted); text-align: center; padding: 40px; }
+        .empty-icon { font-size: 4rem; margin-bottom: 16px; opacity: 0.3; }
+        .examples { margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+        .tag { padding: 6px 14px; background: var(--hover); border: 1px solid var(--border); border-radius: 20px; font-size: 13px; cursor: pointer; }
+        .tag:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* Sidebar */
+        .sidebar { display: flex; flex-direction: column; gap: 16px; }
+        .card { background: var(--card); border-radius: 10px; padding: 16px; border: 1px solid var(--border); }
+        .card.hidden { display: none; }
+        .card-title { font-weight: 600; margin-bottom: 12px; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; }
+
+        /* Plan */
+        .plan-type { display: inline-block; padding: 4px 10px; background: var(--primary); color: white; font-size: 11px; border-radius: 20px; margin-bottom: 8px; }
+        .plan-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+        .plan-desc { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
+        .plan-section { margin-top: 12px; }
+        .plan-section-title { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+        .elements { display: flex; flex-wrap: wrap; gap: 6px; }
+        .element { padding: 4px 10px; background: var(--hover); border-radius: 6px; font-size: 12px; }
+        .steps { display: flex; flex-direction: column; gap: 6px; }
+        .step { display: flex; gap: 8px; font-size: 13px; padding: 8px; background: var(--hover); border-radius: 6px; }
+        .step-num { width: 18px; height: 18px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+
+        /* Scores */
+        .score-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .score-badge { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; }
+        .score-badge.high { background: rgba(76,175,80,0.2); color: var(--success); }
+        .score-badge.medium { background: rgba(255,152,0,0.2); color: var(--warning); }
+        .score-badge.low { background: rgba(244,67,54,0.2); color: var(--error); }
+        .score-list { display: flex; flex-direction: column; gap: 8px; }
+        .score-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .score-name { width: 60px; color: var(--muted); }
+        .score-bar { flex: 1; height: 5px; background: var(--hover); border-radius: 3px; overflow: hidden; }
+        .score-fill { height: 100%; border-radius: 3px; }
+        .score-value { width: 28px; text-align: right; }
+
+        /* History */
+        .history-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: var(--hover); border-radius: 6px; cursor: pointer; }
+        .history-item:hover { background: var(--border); }
+        .history-status { width: 8px; height: 8px; border-radius: 50%; }
+        .history-info { flex: 1; min-width: 0; }
+        .history-theorem { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .history-score { font-size: 11px; color: var(--muted); }
+
+        /* Toast */
+        .toast-container { position: fixed; top: 20px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { padding: 12px 20px; background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--primary); border-radius: 6px; animation: slideIn 0.3s; }
+        .toast.success { border-left-color: var(--success); }
+        .toast.error { border-left-color: var(--error); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🎨 Vispawn</div>
+            <div class="input-wrap">
+                <input type="text" id="input" placeholder="输入定理名称，如：勾股定理、四冲程发动机..." onkeypress="if(event.key==='Enter') generate()">
+                <button class="btn" id="btn" onclick="generate()">生成</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="status hidden" id="status">
+            <div class="status-dot" id="status-dot"></div>
+            <div class="status-info">
+                <div class="status-text" id="status-text">准备就绪</div>
+                <div class="status-detail" id="status-detail"></div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="preview">
+                <div class="preview-header">
+                    <div class="preview-tabs">
+                        <button class="tab active" onclick="switchTab('preview')">预览</button>
+                        <button class="tab" onclick="switchTab('code')">代码</button>
+                    </div>
+                    <div class="preview-actions">
+                        <button class="icon-btn" id="download-btn" style="display:none" onclick="download()">💾</button>
+                    </div>
+                </div>
+                <div class="preview-content">
+                    <div class="empty" id="empty">
+                        <div class="empty-icon">🎨</div>
+                        <div>输入定理名称，点击生成</div>
+                        <div class="examples">
+                            <span class="tag" onclick="setInput('勾股定理')">勾股定理</span>
+                            <span class="tag" onclick="setInput('四冲程发动机')">四冲程发动机</span>
+                            <span class="tag" onclick="setInput('圆的面积')">圆的面积</span>
+                            <span class="tag" onclick="setInput('牛顿第二定律')">牛顿第二定律</span>
+                            <span class="tag" onclick="setInput('三角函数')">三角函数</span>
+                        </div>
+                    </div>
+                    <iframe id="preview-frame" style="display:none"></iframe>
+                    <div id="code-view"></div>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="card hidden" id="plan-card">
+                    <div class="plan-type" id="plan-type">几何</div>
+                    <div class="plan-title" id="plan-title">--</div>
+                    <div class="plan-desc" id="plan-desc">--</div>
+                    <div class="plan-section">
+                        <div class="plan-section-title">展示思路</div>
+                        <div id="plan-concept" style="font-size:13px;color:var(--muted)">--</div>
+                    </div>
+                    <div class="plan-section">
+                        <div class="plan-section-title">关键元素</div>
+                        <div class="elements" id="plan-elements"></div>
+                    </div>
+                    <div class="plan-section">
+                        <div class="plan-section-title">动画步骤</div>
+                        <div class="steps" id="plan-steps"></div>
+                    </div>
+                </div>
+
+                <div class="card hidden" id="score-card">
+                    <div class="score-header">
+                        <div class="card-title" style="margin:0">质量评估</div>
+                        <div class="score-badge" id="score-badge">--</div>
+                    </div>
+                    <div class="score-list" id="score-list"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">历史记录</div>
+                    <div id="history-list"></div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        const API = 'http://localhost:8000';
+        let taskId = null, code = '', history = JSON.parse(localStorage.getItem('vg') || '[]');
+
+        function toast(msg, type='info') {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.textContent = msg;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        function setInput(v) {
+            document.getElementById('input').value = v;
+            generate();
+        }
+
+        async function generate() {
+            const theorem = document.getElementById('input').value.trim();
+            if (!theorem) return toast('请输入定理名称', 'error');
+
+            resetUI();
+            document.getElementById('status').classList.remove('hidden');
+            updateStatus('processing', '正在生成...', `分析"${theorem}"...`);
+            document.getElementById('btn').disabled = true;
+
+            try {
+                const res = await fetch(`${API}/generate`, {
+                    method: 'POST', headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ theorem })
+                });
+                const data = await res.json();
+                taskId = data.task_id;
+
+                const poll = setInterval(async () => {
+                    const r = await fetch(`${API}/result/${taskId}`);
+                    const d = await r.json();
+                    updateUI(d);
+
+                    if (['completed','completed_with_issues','failed'].includes(d.status)) {
+                        clearInterval(poll);
+                        document.getElementById('btn').disabled = false;
+                        toast(d.status === 'completed' ? '生成成功!' : d.status === 'failed' ? '生成失败' : '生成完成(有警告)', d.status === 'failed' ? 'error' : 'success');
+                        addHistory(d);
+                    }
+                }, 1500);
+            } catch (e) {
+                toast('请求失败', 'error');
+                document.getElementById('btn').disabled = false;
+            }
+        }
+
+        function updateStatus(cls, text, detail) {
+            document.getElementById('status-dot').className = 'status-dot ' + cls;
+            document.getElementById('status-text').textContent = text;
+            document.getElementById('status-detail').textContent = detail;
+        }
+
+        function updateUI(d) {
+            const statusMap = {
+                pending: { cls: '', text: '等待中' },
+                processing: { cls: 'processing', text: '生成中' },
+                completed: { cls: 'completed', text: '完成' },
+                failed: { cls: 'failed', text: '失败' }
+            };
+            const s = statusMap[d.status] || statusMap.pending;
+            updateStatus(s.cls, s.text, d.plan ? d.plan.concept?.substring(0, 50) + '...' : '');
+
+            if (d.plan) showPlan(d.plan);
+            if (d.code) { code = d.code; showCode(code); document.getElementById('download-btn').style.display = 'block'; }
+            if (d.scores) showScores(d.total_score, d.scores);
+        }
+
+        function showPlan(p) {
+            document.getElementById('plan-card').classList.remove('hidden');
+            document.getElementById('plan-type').textContent = p.type;
+            document.getElementById('plan-title').textContent = p.topic;
+            document.getElementById('plan-desc').textContent = p.description;
+            document.getElementById('plan-concept').textContent = p.concept;
+            document.getElementById('plan-elements').innerHTML = p.elements?.map(e => `<span class="element">${e}</span>`).join('') || '';
+            document.getElementById('plan-steps').innerHTML = p.steps?.map((s,i) => `<div class="step"><div class="step-num">${i+1}</div><div>${s}</div></div>`).join('') || '';
+        }
+
+        function showCode(c) {
+            document.getElementById('empty').style.display = 'none';
+            document.getElementById('preview-frame').style.display = 'block';
+            const blob = new Blob([c], {type: 'text/html'});
+            document.getElementById('preview-frame').src = URL.createObjectURL(blob);
+            document.getElementById('code-view').textContent = c;
+        }
+
+        function showScores(total, scores) {
+            document.getElementById('score-card').classList.remove('hidden');
+            const t = Math.round(total);
+            const b = document.getElementById('score-badge');
+            b.textContent = t;
+            b.className = 'score-badge ' + (t >= 80 ? 'high' : t >= 60 ? 'medium' : 'low');
+
+            const names = {syntax: '语法', security: '安全', visual: '视觉', pedagogy: '教学'};
+            const colors = {syntax: '#4a90e2', security: '#e94560', visual: '#ffd700', pedagogy: '#9b59b6'};
+            document.getElementById('score-list').innerHTML = Object.entries(scores).map(([k,v]) => `
+                <div class="score-item">
+                    <div class="score-name">${names[k] || k}</div>
+                    <div class="score-bar"><div class="score-fill" style="width:${v.score}%;background:${colors[k] || '#666'}"></div></div>
+                    <div class="score-value">${Math.round(v.score)}</div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(t) {
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('preview-frame').style.display = t === 'preview' ? 'block' : 'none';
+            document.getElementById('code-view').style.display = t === 'code' ? 'block' : 'none';
+        }
+
+        function download() {
+            if (!code) return;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([code], {type: 'text/html'}));
+            a.download = `viz_${Date.now()}.html`;
+            a.click();
+            toast('已下载', 'success');
+        }
+
+        function resetUI() {
+            document.getElementById('empty').style.display = 'flex';
+            document.getElementById('preview-frame').style.display = 'none';
+            document.getElementById('code-view').style.display = 'none';
+            document.getElementById('download-btn').style.display = 'none';
+            document.getElementById('plan-card').classList.add('hidden');
+            document.getElementById('score-card').classList.add('hidden');
+            code = '';
+        }
+
+        function addHistory(d) {
+            history.unshift({id: d.task_id, theorem: d.theorem, status: d.status, score: d.total_score});
+            if (history.length > 10) history = history.slice(0, 10);
+            localStorage.setItem('vg', JSON.stringify(history));
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const el = document.getElementById('history-list');
+            if (!history.length) { el.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:10px">暂无记录</div>'; return; }
+            el.innerHTML = history.map(h => {
+                const c = h.status === 'completed' ? '#4caf50' : h.status === 'failed' ? '#f44336' : '#ff9800';
+                return `<div class="history-item" onclick="loadHistory('${h.id}')">
+                    <div class="history-status" style="background:${c}"></div>
+                    <div class="history-info"><div class="history-theorem">${h.theorem}</div><div class="history-score">${h.score ? '评分: ' + Math.round(h.score) : '处理中'}</div></div>
+                </div>`;
+            }).join('');
+        }
+
+        async function loadHistory(id) {
+            try {
+                const r = await fetch(`${API}/result/${id}`);
+                const d = await r.json();
+                taskId = id;
+                updateUI(d);
+                document.getElementById('input').value = d.theorem;
+                toast('已加载', 'success');
+            } catch (e) { toast('加载失败', 'error'); }
+        }
+
+        renderHistory();
+    </script>
+</body>
+</html>
