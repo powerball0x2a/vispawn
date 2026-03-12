@@ -14,7 +14,7 @@
 >
 > Dites adieu aux graphiques statiques ennuyeux et donnez vie à vos cours ✨
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Русский](README.ru.md) · [Deutsch](README.de.md) · [Démarrage rapide](#-démarrage-rapide)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Русский](README.ru.md) · [Deutsch](README.de.md) · [Démarrage rapide](#-démarrage-rapide) · [API Docs](docs/api-reference.md) · [Contributing](docs/contributing.md)
 
 </div>
 
@@ -113,6 +113,94 @@ curl -X POST http://localhost:8000/agent/generate \
   -H "Content-Type: application/json" \
   -d '{"theorem": "Théorème de Pythagore"}'
 ```
+
+---
+
+## 🏗️ Architecture
+
+```
+User Input: "Théorème de Pythagore"
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Main Agent                               │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │  Autonomous Planning Engine                         │    │
+│  │  - Task complexity analysis                         │    │
+│  │  - Smart parallel/serial decision                  │    │
+│  │  - Sub-agent scheduling                            │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+                    │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+   ┌─────────┐           ┌─────────┐
+   │Analyze  │           │Generate │
+   │analyzer │ ────────▶│generator│
+   └─────────┘           └─────────┘
+        │                     │
+        └──────────┬──────────┘
+                   ▼
+            ┌─────────┐
+            │Evaluate │
+            │evaluator│
+            └─────────┘
+                   │
+                   ▼
+            ┌─────────┐
+            │Validate │
+            │validator│
+            └─────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Final Result                             │
+│  - Three.js code                                          │
+│  - Quality score                                          │
+│  - Rendering validation                                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📦 Modèles (25+)
+
+### Mathématiques
+
+| Concept | Démo |
+|:--------|:-----|
+| 🔺 Théorème de Pythagore | Preuve par l'aire a² + b² = c² |
+| 📐 Trigonométrie | Animation graphe sin/cos |
+| 📈 Fonction exponentielle | Croissance exponentielle |
+| 📉 Fonction logarithme | Courbe logarithmique |
+| ⬜ Aire du polygone régulier | Formule de l'aire du polygone |
+| 🔵 Volume du cône | V = 1/3πr²h |
+| ⚪ Volume de la sphère | V = 4/3πr³ |
+| 🔺 Triangles similaires | Critères de similarité |
+| 🎲 Dés probabilistes | Expérience de probabilité |
+| 🔢 Permutations | Visualisation des permutations |
+
+### Physique
+
+| Concept | Démo |
+|:--------|:-----|
+| ⚙️ Moteur 4 temps | Admission→Compression→Combustion→Échappement |
+| 💡 Réfraction de la lumière | Démonstration loi de Snell |
+| 🧲 Induction électromagnétique | Loi de Faraday |
+| 🏃 Chute libre | Accélération gravitationnelle |
+| 🌊 Mouvement harmonique simple | Oscillateur à ressort |
+| 🌊 Propagation des ondes | Ondes longitudinales et transversales |
+| 🔥 Transfert thermique | Conduction thermique |
+| 🌑 Gravitation universelle | Mouvement planétaire |
+| 💥 Conservation de l'impulsion | Expérience de collision |
+
+### Chimie
+
+| Concept | Démo |
+|:--------|:-----|
+| 💧 Molécule d'eau | Modèle 3D H₂O |
+| ⚗️ Réactions chimiques | Types de réactions |
+| ⚛️ Structure atomique | Noyau et nuage électronique |
 
 ---
 

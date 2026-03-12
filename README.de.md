@@ -14,7 +14,7 @@
 >
 > Verabschieden Sie sich von langweiligen statischen Diagrammen und erwecken Sie Ihren Unterricht zum Leben ✨
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Русский](README.ru.md) · [Français](README.fr.md) · [Schnellstart](#-schnellstart)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Русский](README.ru.md) · [Français](README.fr.md) · [Schnellstart](#-schnellstart) · [API Docs](docs/api-reference.md) · [Contributing](docs/contributing.md)
 
 </div>
 
@@ -113,6 +113,94 @@ curl -X POST http://localhost:8000/agent/generate \
   -H "Content-Type: application/json" \
   -d '{"theorem": "Satz des Pythagoras"}'
 ```
+
+---
+
+## 🏗️ Architektur
+
+```
+User Input: "Satz des Pythagoras"
+                    │
+                    ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Main Agent                               │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │  Autonomous Planning Engine                         │    │
+│  │  - Task complexity analysis                         │    │
+│  │  - Smart parallel/serial decision                  │    │
+│  │  - Sub-agent scheduling                            │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘
+                    │
+        ┌──────────┴──────────┐
+        ▼                     ▼
+   ┌─────────┐           ┌─────────┐
+   │Analyze  │           │Generate │
+   │analyzer │ ────────▶│generator│
+   └─────────┘           └─────────┘
+        │                     │
+        └──────────┬──────────┘
+                   ▼
+            ┌─────────┐
+            │Evaluate │
+            │evaluator│
+            └─────────┘
+                   │
+                   ▼
+            ┌─────────┐
+            │Validate │
+            │validator│
+            └─────────┘
+                   │
+                   ▼
+┌─────────────────────────────────────────────────────────────┐
+│                     Final Result                             │
+│  - Three.js code                                           │
+│  - Quality score                                           │
+│  - Rendering validation                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📦 Vorlagen (25+)
+
+### Mathematik
+
+| Konzept | Demo |
+|:--------|:-----|
+| 🔺 Satz des Pythagoras | a² + b² = c² Flächenbeweis |
+| 📐 Trigonometrie | Sinus/Kosinus Graph-Animation |
+| 📈 Exponentialfunktion | Exponentielles Wachstum |
+| 📉 Logarithmusfunktion | Log-Kurve |
+| ⬜ Regelmäßiges Polygon | Polygon-Flächenformel |
+| 🔵 Kegelvolumen | V = 1/3πr²h |
+| ⚪ Kugelvolumen | V = 4/3πr³ |
+| 🔺 Ähnliche Dreiecke | Ähnlichkeitskriterien |
+| 🎲 Wahrscheinlichkeitswürfel | Wahrscheinlichkeitsexperiment |
+| 🔢 Permutationen | Permutationsvisualisierung |
+
+### Physik
+
+| Konzept | Demo |
+|:--------|:-----|
+| ⚙️ Viertaktmotor | Ansaugen→Verdichtung→Arbeit→Ausstoß |
+| 💡 Lichtbrechung | Snelliussches Gesetz Demo |
+| 🧲 Elektromagnetische Induktion | Faradaysches Gesetz |
+| 🏃 Freier Fall | Beschleunigung durch Schwerkraft |
+| 🌊 Harmonische Schwingung | Federoszillator |
+| 🌊 Wellenausbreitung | Longitudinal- & Transversalwellen |
+| 🔥 Wärmeübertragung | Wärmeleitung |
+| 🌑 Gravitation | Planetenbewegung |
+| 💥 Impulserhaltung | Stoßexperiment |
+
+### Chemie
+
+| Konzept | Demo |
+|:--------|:-----|
+| 💧 Wassermolekül | H₂O 3D-Modell |
+| ⚗️ Chemische Reaktionen | Reaktionstypen |
+| ⚛️ Atomstruktur | Kern & Elektronenhülle |
 
 ---
 
