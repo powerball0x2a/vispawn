@@ -6,7 +6,7 @@
 [![Python Version](https://img.shields.io/python/py-version/vispawn?logo=python)](https://www.python.org)
 [![Three.js](https://img.shields.io/badge/Three.js-r160-orange?logo=three.js)](https://threejs.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/yourusername/vispawn?style=social)](https://github.com/yourusername/vispawn/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/powerball0x2a/vispawn?style=social)](https://github.com/powerball0x2a/vispawn/stargazers)
 
 <br/>
 
@@ -58,7 +58,7 @@
 pip install vispawn
 
 # oder aus den Quellen
-git clone https://github.com/yourusername/vispawn.git
+git clone https://github.com/powerball0x2a/vispawn.git
 cd vispawn
 pip install -e .
 ```

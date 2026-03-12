@@ -42,5 +42,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 圆的面积
   - 牛顿第二定律
 
-[Unreleased]: https://github.com/yourusername/vizgen/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/yourusername/vizgen/releases/tag/v0.1.0
+[Unreleased]: https://github.com/powerball0x2a/vispawn/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/powerball0x2a/vispawn/releases/tag/v0.1.0

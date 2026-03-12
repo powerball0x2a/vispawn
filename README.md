@@ -6,10 +6,10 @@
 [![Python Version](https://img.shields.io/python/py-version/vispawn?logo=python)](https://www.python.org)
 [![Three.js](https://img.shields.io/badge/Three.js-r160-orange?logo=three.js)](https://threejs.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/yourusername/vispawn?style=social)](https://github.com/yourusername/vispawn/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/yourusername/vispawn?style=social)](https://github.com/yourusername/vispawn/network)
-[![Last Commit](https://img.shields.io/github/last-commit/yourusername/vispawn)](https://github.com/yourusername/vispawn/commits)
-[![Contributors](https://img.shields.io/github/contributors/yourusername/vispawn)](https://github.com/yourusername/vispawn/graphs/contributors)
+[![GitHub Stars](https://img.shields.io/github/stars/powerball0x2a/vispawn?style=social)](https://github.com/powerball0x2a/vispawn/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/powerball0x2a/vispawn?style=social)](https://github.com/powerball0x2a/vispawn/network)
+[![Last Commit](https://img.shields.io/github/last-commit/powerball0x2a/vispawn)](https://github.com/powerball0x2a/vispawn/commits)
+[![Contributors](https://img.shields.io/github/contributors/powerball0x2a/vispawn)](https://github.com/powerball0x2a/vispawn/graphs/contributors)
 
 <br/>
 
@@ -61,7 +61,7 @@
 pip install vispawn
 
 # or from source
-git clone https://github.com/yourusername/vispawn.git
+git clone https://github.com/powerball0x2a/vispawn.git
 cd vispawn
 pip install -e .
 ```
@@ -260,7 +260,7 @@ git push origin feature/amazing-feature
 
 ### Contributors
 
-[![Contributors](https://contrib.rocks/image?repo=yourusername/vispawn)](https://github.com/yourusername/vispawn/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=powerball0x2a/vispawn)](https://github.com/powerball0x2a/vispawn/graphs/contributors)
 
 ---
 
@@ -283,6 +283,6 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 **If this project helps you, please ⭐ Star!**
 
-[![Star](https://img.shields.io/github/stars/yourusername/vispawn?style=social)](https://github.com/yourusername/vispawn/stargazers)
+[![Star](https://img.shields.io/github/stars/powerball0x2a/vispawn?style=social)](https://github.com/powerball0x2a/vispawn/stargazers)
 
 </div>

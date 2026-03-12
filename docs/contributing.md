@@ -8,7 +8,7 @@
 
 如果你发现 bug 或有新功能建议：
 
-1. 搜索 [Issues](https://github.com/yourusername/vispawn/issues) 确保没有重复
+1. 搜索 [Issues](https://github.com/powerball0x2a/vispawn/issues) 确保没有重复
 2. 创建新 Issue，清晰描述问题或建议
 3. 附上复现步骤和环境信息
 
@@ -28,7 +28,7 @@
 
 ```bash
 # 克隆开发
-git clone https://github.com/yourusername/vispawn.git
+git clone https://github.com/powerball0x2a/vispawn.git
 cd vispawn
 
 # 创建开发分支

@@ -6,8 +6,8 @@
 [![Python Version](https://img.shields.io/python/py-version/vispawn?logo=python)](https://www.python.org)
 [![Three.js](https://img.shields.io/badge/Three.js-r160-orange?logo=three.js)](https://threejs.org)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![GitHub Stars](https://img.shields.io/github/stars/yourusername/vispawn?style=social)](https://github.com/yourusername/vispawn/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/yourusername/vispawn?style=social)](https://github.com/yourusername/vispawn/network)
+[![GitHub Stars](https://img.shields.io/github/stars/powerball0x2a/vispawn?style=social)](https://github.com/powerball0x2a/vispawn/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/powerball0x2a/vispawn?style=social)](https://github.com/powerball0x2a/vispawn/network)
 
 <br/>
 
@@ -59,7 +59,7 @@
 pip install vispawn
 
 # 或從源碼安裝
-git clone https://github.com/yourusername/vispawn.git
+git clone https://github.com/powerball0x2a/vispawn.git
 cd vispawn
 pip install -e .
 ```

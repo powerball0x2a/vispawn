@@ -11,7 +11,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/yourusername/vispawn.git
+git clone https://github.com/powerball0x2a/vispawn.git
 cd vispawn
 
 # 创建虚拟环境 (推荐)
