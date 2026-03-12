@@ -262,6 +262,10 @@ git push origin feature/amazing-feature
 
 [![Contributors](https://contrib.rocks/image?repo=powerball0x2a/vispawn)](https://github.com/powerball0x2a/vispawn/graphs/contributors)
 
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=powerball0x2a/vispawn&type=Date)](https://star-history.com/#powerball0x2a/vispawn)
+
 ---
 
 ## 📄 License
