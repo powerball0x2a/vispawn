@@ -149,6 +149,10 @@ MITライセンス - [LICENSE](LICENSE)をご覧ください。
 
 ---
 
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=powerball0x2a/vispawn&type=Date)](https://star-history.com/#powerball0x2a/vispawn)
+
 <div align="center">
 
 **このプロジェクトが役に立ったら、⭐ Star해주세요！**

@@ -149,6 +149,10 @@ MIT-Lizenz - Siehe [LICENSE](LICENSE).
 
 ---
 
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=powerball0x2a/vispawn&type=Date)](https://star-history.com/#powerball0x2a/vispawn)
+
 <div align="center">
 
 **Wenn dieses Projekt Ihnen geholfen hat, geben Sie ⭐ Star!**

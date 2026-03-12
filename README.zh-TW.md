@@ -273,6 +273,10 @@ MIT License - 查看 [LICENSE](LICENSE) 了解更多。
 
 ---
 
+### Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=powerball0x2a/vispawn&type=Date)](https://star-history.com/#powerball0x2a/vispawn)
+
 <div align="center">
 
 **如果這個項目對你有幫助，歡迎 ⭐ Star 支持！**
