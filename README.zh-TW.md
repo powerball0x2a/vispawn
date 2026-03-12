@@ -15,7 +15,7 @@
 >
 > 告別枯燥的靜態圖表，讓教學演示活起來 ✨
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [快速開始](#-快速開始) · [API 文檔](docs/api-reference.md) · [貢獻指南](docs/contributing.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Русский](README.ru.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [快速開始](#-快速開始) · [API 文檔](docs/api-reference.md) · [貢獻指南](docs/contributing.md)
 
 </div>
 

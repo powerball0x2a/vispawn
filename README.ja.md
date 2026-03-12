@@ -14,7 +14,7 @@
 >
 > つまらない静的チャートに別れを告げ、教学演示を生き生きとさせましょう ✨
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [한국어](README.ko.md) · [快速開始](#-クイックスタート)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [한국어](README.ko.md) · [Русский](README.ru.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [クイックスタート](#-クイックスタート)
 
 </div>
 

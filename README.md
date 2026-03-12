@@ -17,7 +17,7 @@
 >
 > Say goodbye to boring static charts, bring your teaching to life ✨
 
-[English](README.md) · [快速开始](#-快速开始) · [API Docs](docs/api-reference.md) · [Contributing](docs/contributing.md)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [快速开始](#-快速开始) · [API Docs](docs/api-reference.md) · [Contributing](docs/contributing.md)
 
 </div>
 

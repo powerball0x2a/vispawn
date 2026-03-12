@@ -14,7 +14,7 @@
 >
 > Dites adieu aux graphiques statiques ennuyeux et donnez vie à vos cours ✨
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Démarrage rapide](#-démarrage-rapide)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [한국어](README.ko.md) · [Русский](README.ru.md) · [Deutsch](README.de.md) · [Démarrage rapide](#-démarrage-rapide)
 
 </div>
 

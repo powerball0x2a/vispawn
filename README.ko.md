@@ -14,7 +14,7 @@
 >
 > 지루한 정적 차트에 작별하고 교육演示을 살아나게 하세요 ✨
 
-[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [快速 시작](#-빠른-시작)
+[English](README.md) · [简体中文](README.zh-CN.md) · [繁体中文](README.zh-TW.md) · [日本語](README.ja.md) · [Русский](README.ru.md) · [Deutsch](README.de.md) · [Français](README.fr.md) · [빠른 시작](#-빠른-시작)
 
 </div>
 
